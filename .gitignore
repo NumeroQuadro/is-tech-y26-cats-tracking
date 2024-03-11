@@ -47,6 +47,9 @@ bin/
 !gradle-wrapper.jar
 .gradle/taskHistory/
 .gradle/buildOutputCleanup/
+.properties/
+.bat/
+gradlew
 
 # IntelliJ-specific
 .idea/

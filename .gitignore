@@ -82,3 +82,6 @@ Thumbs.db
 
 # Logs and crash reports
 hs_err_pid*
+/gradle/wrapper/gradle-wrapper.properties
+/gradlew.bat
+/settings.gradle

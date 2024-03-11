@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id("io.freefair.lombok") version "8.6"
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    // hibernate
+    implementation 'org.hibernate:hibernate-core:5.4.30.Final' // Use the latest version
+    // postgresql
+    implementation 'org.postgresql:postgresql:42.2.19' // Use the latest version
+}
+
+test {
+    useJUnitPlatform()
+}

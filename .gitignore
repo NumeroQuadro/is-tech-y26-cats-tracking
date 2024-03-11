@@ -85,3 +85,5 @@ hs_err_pid*
 /gradle/wrapper/gradle-wrapper.properties
 /gradlew.bat
 /settings.gradle
+
+/Application/src/main/resources/hibernate.cfg.xml

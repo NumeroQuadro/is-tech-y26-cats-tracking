@@ -1,0 +1,20 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %-5level - %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Set the default log level to DEBUG (or whatever you prefer) -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <!-- Reduce logging for Hibernate to WARN -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.flywaydb" level="WARN"/>
+
+    <!-- If you're using SQL logging and find it too verbose, you can also adjust it separately -->
+    <logger name="org.hibernate.SQL" level="WARN"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="WARN"/>
+</configuration>

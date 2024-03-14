@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Setter
 @Getter
@@ -15,4 +16,6 @@ public class Owner {
     private Integer id;
     @Column(name = "owner_name")
     private String name;
+    @Column(name = "owner_birthday")
+    private LocalDate birthDate;
 }

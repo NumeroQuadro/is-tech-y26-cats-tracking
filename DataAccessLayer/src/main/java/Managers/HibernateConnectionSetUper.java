@@ -1,24 +1,40 @@
 package Managers;
 
-import org.hibernate.SessionFactory;
+import Repositories.OwnerRepository;
+
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.Persistence;
+import javax.persistence.EntityManagerFactory;
 
 public class HibernateConnectionSetUper {
-    private SessionFactory sessionFactory;
+    private static final Logger logger = LoggerFactory.getLogger(HibernateConnectionSetUper.class);
     private HibernateConfigurationFilePaths hibernateConfigurationFilePaths = new HibernateConfigurationFilePaths();
 
-    public SessionFactory setUp() {
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure(hibernateConfigurationFilePaths.HIBERNATE_CONFIGURATIONS)
-                .build();
+    public EntityManagerFactory setUpWithPersistenceJPA() {
         try {
-            sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-            return sessionFactory;
+            return Persistence.createEntityManagerFactory(hibernateConfigurationFilePaths.PERSISTENCE_UNIT_NAME);
         } catch (Exception e) {
-            System.err.println("some troubles with building session factory: " + e.getMessage());
-            StandardServiceRegistryBuilder.destroy(registry);
+            logger.error("problem was occured trying to set up EntityManagerFactory", e);
+        }
+
+        return null;
+    }
+
+    public EntityManagerFactory setUpWithHibernate() {
+        try {
+            StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                    .configure(hibernateConfigurationFilePaths.HIBERNATE_CONFIGURATIONS)
+                    .build();
+            return new MetadataSources(registry)
+                    .buildMetadata()
+                    .buildSessionFactory();
+        } catch (Exception e) {
+            logger.error("problem was occured trying to set up EntityManagerFactory", e);
         }
 
         return null;

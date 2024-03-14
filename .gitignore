@@ -87,3 +87,4 @@ hs_err_pid*
 /settings.gradle
 
 /Application/src/main/resources/hibernate.cfg.xml
+/DataAccessLayer/src/main/resources/META-INF/persistence.xml

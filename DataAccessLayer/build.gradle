@@ -34,7 +34,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     // hibernate
-    implementation 'org.hibernate:hibernate-core:5.4.30.Final' // Use the latest version
+    implementation 'org.hibernate:hibernate-core:5.4.30.Final' // Use the version
+
     // postgresql
     implementation 'org.postgresql:postgresql:42.2.19' // Use the latest version
     // flyway https://mvnrepository.com/artifact/org.flywaydb/flyway-core
@@ -42,6 +43,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation 'ch.qos.logback:logback-classic:1.2.3' // Use the latest version
+
 }
 
 test {

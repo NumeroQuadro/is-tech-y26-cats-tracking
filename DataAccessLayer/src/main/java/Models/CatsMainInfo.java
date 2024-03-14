@@ -1,10 +1,14 @@
 package Models;
 
+import Models.Enums.CatColor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,9 +18,6 @@ public class CatsMainInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cat_id;
-    @ManyToOne()
-    @JoinColumn(name = "owner_id")
-    private Owner ownerId;
     @Column(name = "cat_name")
     private String name;
     @Column(name = "cat_birthday")

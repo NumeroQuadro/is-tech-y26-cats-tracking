@@ -1,13 +1,14 @@
 package RepositoryInterfaces;
 
 import Models.CatsMainInfo;
+import Models.OwnersWithCats;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import java.util.Collection;
 
 public interface CatTransactable {
     CatsMainInfo addCatToMainInfo(EntityManagerFactory entityManagerFactory, CatsMainInfo catsMainInfo);
     Collection<CatsMainInfo> listCatsFromMainInfo(EntityManagerFactory entityManagerFactory);
-    void updateInfoAboutCatInMainInfo(EntityManagerFactory entityManagerFactory, CatsMainInfo oldCatsMainInfo, CatsMainInfo newCatsMainInfo);
-    void deleteCatFromMainInfo(EntityManagerFactory entityManagerFactory, Integer catId);
+    void deleteCatFromMainInfo(EntityManagerFactory entityManagerFactory, Integer catId, Integer ownerId);
+    OwnersWithCats addCatToOwnersWithCats(EntityManagerFactory entityManagerFactory, OwnersWithCats ownersWithCats);
 }

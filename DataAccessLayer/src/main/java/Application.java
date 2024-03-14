@@ -1,8 +1,9 @@
 import Managers.HibernateConnectionSetUper;
 import Migrations.InitialMigration;
 import Models.CatsMainInfo;
-import Models.CatColor;
+import Models.Enums.CatColor;
 import Models.Owner;
+import Models.OwnersWithCats;
 import Repositories.CatRepository;
 import Repositories.OwnerRepository;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 public class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
@@ -31,7 +33,7 @@ public class Application {
         comaru.setBirthDate(LocalDate.of(2019, 1, 1));
         comaru.setBreed("Manchkin");
         comaru.setColor(CatColor.semi_color);
-        comaru.setOwnerId(dimon);
+
 
         var hibernateConnectionSetUper = new HibernateConnectionSetUper();
         var entityManagerFactory = hibernateConnectionSetUper.setUpWithHibernate();
@@ -39,7 +41,22 @@ public class Application {
         var ownerRepo = new OwnerRepository();
         ownerRepo.addOwner(entityManagerFactory, dimon);
         catRepo.addCatToMainInfo(entityManagerFactory, comaru);
-        catRepo.deleteCatFromMainInfo(entityManagerFactory, 1);
-        catRepo.listCatsFromMainInfo(entityManagerFactory).forEach(catsMainInfo -> System.out.println(catsMainInfo.getName()));
+        var cats = catRepo.listCatsFromMainInfo(entityManagerFactory).stream().toList();
+        var cat = cats.stream().findFirst().orElse(null);
+
+        var comaruWithDimon = new OwnersWithCats();
+        comaruWithDimon.setOwnerId(dimon.getId());
+
+        if (cat == null) {
+            logger.error("No cats found");
+            return;
+        }
+
+        var catId = cat.getCat_id();
+
+        comaruWithDimon.setCatId(catId);
+        catRepo.addCatToOwnersWithCats(entityManagerFactory, comaruWithDimon);
+        catRepo.deleteCatFromMainInfo(entityManagerFactory, catId, dimon.getId());
+
     }
 }

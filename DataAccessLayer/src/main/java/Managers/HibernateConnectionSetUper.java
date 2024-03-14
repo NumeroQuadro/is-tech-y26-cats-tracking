@@ -2,14 +2,13 @@ package Managers;
 
 import Repositories.OwnerRepository;
 
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.Persistence;
-import javax.persistence.EntityManagerFactory;
 
 public class HibernateConnectionSetUper {
     private static final Logger logger = LoggerFactory.getLogger(HibernateConnectionSetUper.class);

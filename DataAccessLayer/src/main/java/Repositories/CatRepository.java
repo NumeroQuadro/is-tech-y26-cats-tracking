@@ -2,15 +2,17 @@ package Repositories;
 
 import Managers.HibernateConnectionSetUper;
 import Models.CatsMainInfo;
+import Models.OwnersCatsPrimaryKey;
+import Models.OwnersWithCats;
 import RepositoryInterfaces.CatTransactable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import java.util.Collection;
 import java.util.List;
 
@@ -68,30 +70,21 @@ public class CatRepository implements CatTransactable {
     }
 
     @Override
-    public void updateInfoAboutCatInMainInfo(EntityManagerFactory entityManagerFactory, CatsMainInfo oldCatsMainInfo, CatsMainInfo newCatsMainInfo) {
-        var entityManager = entityManagerFactory.createEntityManager();
-
-        if (!oldCatsMainInfo.getCat_id().equals(newCatsMainInfo.getCat_id())) {
-            String message = "Cannot update cat's info, because the id of the old cat and the new cat are different";
-            logger.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        // TODO: implement this method
-    }
-
-    @Override
-    public void deleteCatFromMainInfo(EntityManagerFactory entityManagerFactory, Integer catId) {
-        // TODO: firstly delete this cat from another tables (where are foreign keys to this cat) and then delete this cat from the main table
+    public void deleteCatFromMainInfo(EntityManagerFactory entityManagerFactory, Integer catId, Integer ownerId) {
         var entityManager = entityManagerFactory.createEntityManager();
         try {
             var transaction = entityManager.getTransaction();
             transaction.begin();
 
-            CatsMainInfo cat = entityManager.find(CatsMainInfo.class, catId);
-            if (cat != null) {
-                entityManager.remove(cat);
-            } else {
-                throw new IllegalArgumentException("There is no cat with id " + catId);
+            OwnersCatsPrimaryKey pk = new OwnersCatsPrimaryKey(ownerId, catId);
+            OwnersWithCats ownersWithCats = entityManager.find(OwnersWithCats.class, pk);
+            var catsMainInfo = entityManager.find(CatsMainInfo.class, catId);
+
+            if (ownersWithCats != null) {
+                entityManager.remove(ownersWithCats);
+            }
+            if (catsMainInfo != null) {
+                entityManager.remove(catsMainInfo);
             }
 
             transaction.commit();
@@ -100,5 +93,27 @@ public class CatRepository implements CatTransactable {
         } finally {
             entityManager.close();
         }
+    }
+
+    @Override
+    public OwnersWithCats addCatToOwnersWithCats(EntityManagerFactory entityManagerFactory, OwnersWithCats ownersWithCats) {
+        var entityManager = entityManagerFactory.createEntityManager();
+
+        try {
+            var transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            entityManager.persist(ownersWithCats);
+
+            transaction.commit();
+
+            return ownersWithCats;
+        } catch (RuntimeException e) {
+            logger.error("An error occurred", e);
+        } finally {
+            entityManager.close();
+        }
+
+        return null;
     }
 }

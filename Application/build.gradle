@@ -23,13 +23,14 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     // hibernate
-    implementation 'org.hibernate:hibernate-core:5.4.30.Final' // Use the latest version
+    implementation "org.hibernate.orm:hibernate-core:6.4.4.Final"
     // postgresql
     implementation 'org.postgresql:postgresql:42.2.19' // Use the latest version
+    // flyway https://mvnrepository.com/artifact/org.flywaydb/flyway-core
+    implementation group: 'org.flywaydb', name: 'flyway-core', version: '8.0.0'
 
-// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7'
-
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation 'ch.qos.logback:logback-classic:1.2.3' // Use the latest version
 
 }
 

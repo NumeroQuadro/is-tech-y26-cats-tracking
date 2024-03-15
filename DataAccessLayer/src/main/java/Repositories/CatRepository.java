@@ -2,9 +2,9 @@ package Repositories;
 
 import Managers.HibernateConnectionSetUper;
 import Models.CatsMainInfo;
+import Models.CatsWithFriends;
 import Models.OwnersCatsPrimaryKey;
 import Models.OwnersWithCats;
-import RepositoryInterfaces.CatTransactable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,5 +115,28 @@ public class CatRepository implements CatTransactable {
         }
 
         return null;
+    }
+
+    @Override
+    public void insertCatAndItFriendToFriendsTable(EntityManagerFactory entityManagerFactory, CatsWithFriends catsWithFriends) {
+        var entityManager = entityManagerFactory.createEntityManager();
+
+        try {
+            var transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            var catsWithFriendsReverse = new CatsWithFriends();
+            catsWithFriendsReverse.setCatId(catsWithFriends.getFriendId());
+            catsWithFriendsReverse.setFriendId(catsWithFriends.getCatId());
+
+            entityManager.persist(catsWithFriends);
+            entityManager.persist(catsWithFriendsReverse);
+
+            transaction.commit();
+        } catch (RuntimeException e) {
+            logger.error("An error occurred", e);
+        } finally {
+            entityManager.close();
+        }
     }
 }

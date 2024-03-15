@@ -1,8 +1,9 @@
 package Repositories;
 
 import Managers.HibernateConnectionSetUper;
+import Models.CatsMainInfo;
 import Models.Owner;
-import RepositoryInterfaces.OwnerTransactable;
+import Models.OwnersWithCats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,5 +68,29 @@ public class OwnerRepository implements OwnerTransactable {
         }
 
         return null;
+    }
+
+    @Override
+    public void deleteOwner(EntityManagerFactory entityManagerFactory, Integer ownerId) {
+        var entityManager = entityManagerFactory.createEntityManager();
+
+        try {
+            var transaction = entityManager.getTransaction();
+            transaction.begin();
+
+            Owner owner = entityManager.find(Owner.class, ownerId);
+
+            if (owner != null) {
+                entityManager.remove(owner);
+            }
+
+            transaction.commit();
+        }
+        catch (RuntimeException e) {
+            logger.error("An error occurred", e);
+        }
+        finally {
+            entityManager.close();
+        }
     }
 }

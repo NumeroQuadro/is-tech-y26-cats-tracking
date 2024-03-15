@@ -28,6 +28,9 @@ CREATE TABLE IF NOT EXISTS owners_with_cats
 
 create table if not exists cats_friends
 (
-    cat_id    int primary key,
-    friend_id int not null references cats_main_info (cat_id)
+    cat_id    int not null,
+    friend_id int not null,
+    primary key (cat_id, friend_id),
+    foreign key (cat_id) references cats_main_info (cat_id),
+    foreign key (friend_id) references cats_main_info (cat_id)
 );

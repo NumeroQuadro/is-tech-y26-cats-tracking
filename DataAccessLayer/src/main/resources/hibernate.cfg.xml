@@ -15,11 +15,14 @@
         <!-- Echo all executed SQL to stdout -->
         <property name="show_sql">true</property>
 
-        <!-- Update the database schema on startup -->
+        <!-- Disable automatic schema generation -->
         <property name="hbm2ddl.auto">update</property>
 
         <!-- Names the annotated entity class -->
         <mapping class="Models.Owner"/>
+        <mapping class="Models.CatsMainInfo"/>
+        <mapping class="Models.OwnersWithCats"/>
+        <mapping class="Models.CatsWithFriends"/>
 
     </session-factory>
 </hibernate-configuration>

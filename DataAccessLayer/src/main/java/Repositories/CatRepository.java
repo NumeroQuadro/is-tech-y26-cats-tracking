@@ -1,10 +1,7 @@
 package Repositories;
 
 import Managers.HibernateConnectionSetUper;
-import Models.CatsMainInfo;
-import Models.CatsWithFriends;
-import Models.OwnersCatsPrimaryKey;
-import Models.OwnersWithCats;
+import Models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +73,7 @@ public class CatRepository implements CatTransactable {
             var transaction = entityManager.getTransaction();
             transaction.begin();
 
-            OwnersCatsPrimaryKey pk = new OwnersCatsPrimaryKey(ownerId, catId);
+            OwnerWithCatID pk = new OwnerWithCatID(ownerId, catId);
             OwnersWithCats ownersWithCats = entityManager.find(OwnersWithCats.class, pk);
             var catsMainInfo = entityManager.find(CatsMainInfo.class, catId);
 
@@ -96,18 +93,29 @@ public class CatRepository implements CatTransactable {
     }
 
     @Override
-    public OwnersWithCats addCatToOwnersWithCats(EntityManagerFactory entityManagerFactory, OwnersWithCats ownersWithCats) {
+    public OwnersWithCats addCatToOwnersWithCats(EntityManagerFactory entityManagerFactory, Integer ownerId, Integer catId) {
         var entityManager = entityManagerFactory.createEntityManager();
 
         try {
             var transaction = entityManager.getTransaction();
             transaction.begin();
 
-            entityManager.persist(ownersWithCats);
+            Owner existingOwner = entityManager.find(Owner.class, ownerId);
+            CatsMainInfo existingCat = entityManager.find(CatsMainInfo.class, catId);
+            OwnerWithCatID id = new OwnerWithCatID();
+            id.setOwnerId(existingOwner.getId());
+            id.setCatId(existingCat.getCatId());
+
+            var ownerWithCat = new OwnersWithCats();
+            ownerWithCat.setOwner(existingOwner);
+            ownerWithCat.setCat(existingCat);
+            ownerWithCat.setId(id);
+
+            entityManager.persist(ownerWithCat);
 
             transaction.commit();
 
-            return ownersWithCats;
+            return ownerWithCat;
         } catch (RuntimeException e) {
             logger.error("An error occurred", e);
         } finally {

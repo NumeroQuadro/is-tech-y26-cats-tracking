@@ -54,7 +54,7 @@ public class Application {
         var cocoaCat = cats.get(1);
 
         var comaruWithDimon = new OwnersWithCats();
-        comaruWithDimon.setOwnerId(dimon.getId());
+        comaruWithDimon.setCat(comaruCat);
 
         if (comaruCat == null || cocoaCat == null) {
             logger.error("No cats found");
@@ -68,10 +68,10 @@ public class Application {
         catsWithFriends.setCatId(comaruId);
         catsWithFriends.setFriendId(cocoaId);
 
-        comaruWithDimon.setCatId(comaruId);
-        catRepo.addCatToOwnersWithCats(entityManagerFactory, comaruWithDimon);
-        //catRepo.deleteCatFromMainInfo(entityManagerFactory, catId, dimon.getId());
+        comaruWithDimon.setOwner(dimon);
+        catRepo.addCatToOwnersWithCats(entityManagerFactory, dimon.getId(), comaruId);
         catRepo.insertCatAndItFriendToFriendsTable(entityManagerFactory, catsWithFriends);
         ownerRepo.deleteOwner(entityManagerFactory, dimon.getId());
+        //catRepo.deleteCatFromMainInfo(entityManagerFactory, catId, dimon.getId());
     }
 }

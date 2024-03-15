@@ -14,5 +14,5 @@ public interface CatTransactable {
     void insertCatAndItFriendToFriendsTable(EntityManagerFactory entityManagerFactory, CatsWithFriends catsWithFriends);
 
 
-    OwnersWithCats addCatToOwnersWithCats(EntityManagerFactory entityManagerFactory, OwnersWithCats ownersWithCats);
+    OwnersWithCats addCatToOwnersWithCats(EntityManagerFactory entityManagerFactory, Integer ownerId, Integer catId);
 }

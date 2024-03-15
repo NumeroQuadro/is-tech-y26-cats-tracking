@@ -9,13 +9,19 @@ import jakarta.persistence.*;
 @Table(name = "owners_with_cats")
 @Getter
 @Setter
-@IdClass(OwnersCatsPrimaryKey.class)
 public class OwnersWithCats {
-    @Column(name = "owner_id")
-    private Integer ownerId;
-    @Id
-    @Column(name = "cat_id")
-    private Integer catId;
+    @EmbeddedId
+    private OwnerWithCatID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("ownerId")
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("catId")
+    @JoinColumn(name = "cat_id")
+    private CatsMainInfo cat;
 
     public OwnersWithCats() { }
 }

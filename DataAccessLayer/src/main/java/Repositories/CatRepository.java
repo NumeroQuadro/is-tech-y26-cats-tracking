@@ -2,6 +2,8 @@ package Repositories;
 
 import Managers.HibernateConnectionSetUper;
 import Models.*;
+import Models.Enums.CatColor;
+import RepositoriesInterfaces.CatTransactable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,19 +12,33 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 public class CatRepository implements CatTransactable {
     private static final Logger logger = LoggerFactory.getLogger(OwnerRepository.class);
     private final HibernateConnectionSetUper hibernateConnectionSetUper = new HibernateConnectionSetUper();
+    private final EntityManagerFactory entityManagerFactory;
+
+    public CatRepository(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+    }
+
     @Override
-    public CatsMainInfo addCatToMainInfo(EntityManagerFactory entityManagerFactory, CatsMainInfo catsMainInfo) {
+    public CatsMainInfo addCatToMainInfo(String catName, String catBredd, LocalDate birthday, CatColor catColor) {
         var entityManager = entityManagerFactory.createEntityManager();
 
         try {
             var transaction = entityManager.getTransaction();
             transaction.begin();
+
+            var catsMainInfo = new CatsMainInfo();
+            catsMainInfo.setName(catName);
+            catsMainInfo.setBreed(catBredd);
+            catsMainInfo.setBirthDate(birthday);
+            catsMainInfo.setColor(catColor);
 
             entityManager.persist(catsMainInfo);
 
@@ -31,15 +47,14 @@ public class CatRepository implements CatTransactable {
             return catsMainInfo;
         } catch (RuntimeException e) {
             logger.error("An error occurred", e);
+            throw e;
         } finally {
             entityManager.close();
         }
-
-        return null;
     }
 
     @Override
-    public Collection<CatsMainInfo> listCatsFromMainInfo(EntityManagerFactory entityManagerFactory) {
+    public Collection<CatsMainInfo> listCatsFromMainInfo() {
         var entityManager = entityManagerFactory.createEntityManager();
 
         try {
@@ -59,15 +74,14 @@ public class CatRepository implements CatTransactable {
 
         } catch (RuntimeException e) {
             logger.error("An error occurred", e);
+            throw e;
         } finally {
             entityManager.close();
         }
-
-        return null;
     }
 
     @Override
-    public void deleteCatFromMainInfo(EntityManagerFactory entityManagerFactory, Integer catId, Integer ownerId) {
+    public void deleteCatFromMainInfo(Integer catId, Integer ownerId) {
         var entityManager = entityManagerFactory.createEntityManager();
         try {
             var transaction = entityManager.getTransaction();
@@ -87,13 +101,14 @@ public class CatRepository implements CatTransactable {
             transaction.commit();
         } catch (RuntimeException e) {
             logger.error("An error occurred", e);
+            throw e;
         } finally {
             entityManager.close();
         }
     }
 
     @Override
-    public OwnersWithCats addCatToOwnersWithCats(EntityManagerFactory entityManagerFactory, Integer ownerId, Integer catId) {
+    public OwnersWithCats addCatToOwnersWithCats(Integer ownerId, Integer catId) {
         var entityManager = entityManagerFactory.createEntityManager();
 
         try {
@@ -118,20 +133,23 @@ public class CatRepository implements CatTransactable {
             return ownerWithCat;
         } catch (RuntimeException e) {
             logger.error("An error occurred", e);
+            throw e;
         } finally {
             entityManager.close();
         }
-
-        return null;
     }
 
     @Override
-    public void insertCatAndItFriendToFriendsTable(EntityManagerFactory entityManagerFactory, CatsWithFriends catsWithFriends) {
+    public void insertCatAndItFriendToFriendsTable(Integer targetCatId, Integer friendId) {
         var entityManager = entityManagerFactory.createEntityManager();
 
         try {
             var transaction = entityManager.getTransaction();
             transaction.begin();
+
+            var catsWithFriends = new CatsWithFriends();
+            catsWithFriends.setCatId(targetCatId);
+            catsWithFriends.setFriendId(friendId);
 
             var catsWithFriendsReverse = new CatsWithFriends();
             catsWithFriendsReverse.setCatId(catsWithFriends.getFriendId());
@@ -143,6 +161,7 @@ public class CatRepository implements CatTransactable {
             transaction.commit();
         } catch (RuntimeException e) {
             logger.error("An error occurred", e);
+            throw e;
         } finally {
             entityManager.close();
         }

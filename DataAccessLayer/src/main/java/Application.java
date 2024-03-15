@@ -24,32 +24,19 @@ public class Application {
         } catch (IOException e) {
             logger.error("An error occurred", e);
         }
-        var dimon = new Owner();
-        dimon.setName("Dimon");
-        dimon.setBirthDate(LocalDate.of(2004, 4, 13));
 
-        var catRepo = new CatRepository();
-        var comaru = new CatsMainInfo();
-        comaru.setName("Comaru");
-        comaru.setBirthDate(LocalDate.of(2019, 1, 1));
-        comaru.setBreed("Manchkin");
-        comaru.setColor(CatColor.semi_color);
-
-        var cocoa = new CatsMainInfo();
-        cocoa.setName("Cocoa");
-        cocoa.setBirthDate(LocalDate.of(2020, 2, 3));
-        cocoa.setBreed("Manchkin");
-        cocoa.setColor(CatColor.black);
 
         var hibernateConnectionSetUper = new HibernateConnectionSetUper();
         var entityManagerFactory = hibernateConnectionSetUper.setUpWithHibernate();
 
-        var ownerRepo = new OwnerRepository();
-        ownerRepo.addOwner(entityManagerFactory, dimon);
+        var catRepo = new CatRepository(entityManagerFactory);
 
-        catRepo.addCatToMainInfo(entityManagerFactory, comaru);
-        catRepo.addCatToMainInfo(entityManagerFactory, cocoa);
-        var cats = catRepo.listCatsFromMainInfo(entityManagerFactory).stream().toList();
+        var ownerRepo = new OwnerRepository(entityManagerFactory);
+        ownerRepo.addOwner(LocalDate.of(2004, 4, 13), "Dimon");
+
+        catRepo.addCatToMainInfo("Comaru", "Manchkin", LocalDate.of(2019, 1, 1), CatColor.semi_color);
+        catRepo.addCatToMainInfo("Cocoa", "Manchkin", LocalDate.of(2020, 2, 3), CatColor.black);
+        var cats = catRepo.listCatsFromMainInfo().stream().toList();
         var comaruCat = cats.get(0);
         var cocoaCat = cats.get(1);
 
@@ -64,14 +51,12 @@ public class Application {
         var comaruId = comaruCat.getCatId();
         var cocoaId = cocoaCat.getCatId();
 
-        var catsWithFriends = new CatsWithFriends();
-        catsWithFriends.setCatId(comaruId);
-        catsWithFriends.setFriendId(cocoaId);
+        var dimon = ownerRepo.listOwners().stream().findFirst().orElse(null);
 
         comaruWithDimon.setOwner(dimon);
-        catRepo.addCatToOwnersWithCats(entityManagerFactory, dimon.getId(), comaruId);
-        catRepo.insertCatAndItFriendToFriendsTable(entityManagerFactory, catsWithFriends);
-        ownerRepo.deleteOwner(entityManagerFactory, dimon.getId());
+        catRepo.addCatToOwnersWithCats(dimon.getId(), comaruId);
+        catRepo.insertCatAndItFriendToFriendsTable(comaruId, cocoaId);
+        ownerRepo.deleteOwner(dimon.getId());
         //catRepo.deleteCatFromMainInfo(entityManagerFactory, catId, dimon.getId());
     }
 }

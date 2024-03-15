@@ -5,4 +5,5 @@ public enum CatColor {
     semi_color,
     black,
     grey,
+    undefined,
 }

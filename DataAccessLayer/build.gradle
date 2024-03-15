@@ -43,7 +43,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation 'ch.qos.logback:logback-classic:1.2.3' // Use the latest version
-    implementation project(':Application')
 
 
 }

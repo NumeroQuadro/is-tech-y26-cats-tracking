@@ -1,9 +1,8 @@
 package Repositories;
 
 import Managers.HibernateConnectionSetUper;
-import Models.CatsMainInfo;
 import Models.Owner;
-import Models.OwnersWithCats;
+import RepositoriesInterfaces.OwnerTransactable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,17 +11,29 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 public class OwnerRepository implements OwnerTransactable {
     private static final Logger logger = LoggerFactory.getLogger(OwnerRepository.class);
     private final HibernateConnectionSetUper hibernateConnectionSetUper = new HibernateConnectionSetUper();
+    private final EntityManagerFactory entityManagerFactory;
+
+    public OwnerRepository(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+    }
+
     @Override
-    public Owner addOwner(EntityManagerFactory entityManagerFactory, Owner owner) {
+    public Owner addOwner(LocalDate birthday, String ownerName) {
         var entityManager = entityManagerFactory.createEntityManager();
         try {
             var transaction = entityManager.getTransaction();
+
+            var owner = new Owner();
+            owner.setBirthDate(birthday);
+            owner.setName(ownerName);
 
             transaction.begin();
             entityManager.persist(owner);
@@ -40,7 +51,7 @@ public class OwnerRepository implements OwnerTransactable {
 
 
     @Override
-    public Collection<Owner> listOwners(EntityManagerFactory entityManagerFactory) {
+    public Collection<Owner> listOwners() {
         var entityManager = entityManagerFactory.createEntityManager();
         try {
             var transaction = entityManager.getTransaction();
@@ -71,7 +82,7 @@ public class OwnerRepository implements OwnerTransactable {
     }
 
     @Override
-    public void deleteOwner(EntityManagerFactory entityManagerFactory, Integer ownerId) {
+    public void deleteOwner(Integer ownerId) {
         var entityManager = entityManagerFactory.createEntityManager();
 
         try {

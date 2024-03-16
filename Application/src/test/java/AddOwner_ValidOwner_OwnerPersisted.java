@@ -1,14 +1,8 @@
-import CatServices.CatService;
-import Contracts.ICatService;
-import Contracts.IOwnerService;
 import Models.Owner;
-import OwnerServices.OwnerService;
+import Repositories.CatRepository;
 import Repositories.OwnerRepository;
-import ResultTypes.TransactionResult;
-import org.hibernate.Transaction;
 import org.junit.jupiter.api.Test;
 import jakarta.persistence.*;
-import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,7 +12,7 @@ import java.time.LocalDate;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class addOwner_ValidOwner_OwnerPersisted {
+public class AddOwner_ValidOwner_OwnerPersisted {
     @Test
     public void addOwner_ValidOwner_OwnerPersisted() {
         EntityManagerFactory mockedEntityManagerFactory = mock(EntityManagerFactory.class);
@@ -36,6 +30,7 @@ public class addOwner_ValidOwner_OwnerPersisted {
         Owner resultOwner = ownerRepository.addOwner(birthday, name);
 
         verify(mockedTransaction).begin();
+        verify(mockedEntityManager).persist(resultOwner);
         verify(mockedTransaction).commit();
 
         assertNotNull(resultOwner);
